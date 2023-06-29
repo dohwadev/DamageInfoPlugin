@@ -1,0 +1,6 @@
+﻿name: Damage Info
+internal_name: DamageInfoPlugin
+author: perchbird
+punchline: Modifies in-game fly-text for more (or less) damage information.
+description: Configurable options for in-game fly text color based on damage type, with additional settings for damage source and fly text decluttering options.
+repo_url: https://github.com/lmcintyre/DamageInfoPlugin

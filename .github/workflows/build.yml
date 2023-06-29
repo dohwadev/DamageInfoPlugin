@@ -1,0 +1,34 @@
+﻿name: .NET Build
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '6.0.x'
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Download Dalamud
+        if: "!contains(github.event.head_commit.message, '[stg]')"
+        run: |
+          Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/latest.zip -OutFile latest.zip
+          Expand-Archive -Force latest.zip "$env:AppData\XIVLauncher\addon\Hooks\dev"
+      - name: Download Dalamud staging
+        if: "contains(github.event.head_commit.message, '[stg]')"
+        run: |
+          Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/stg/latest.zip -OutFile latest.zip
+          Expand-Archive -Force latest.zip "$env:AppData\XIVLauncher\addon\Hooks\dev"
+      - name: Build
+        run: |
+          dotnet build --no-restore --configuration Release --nologo
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2.2.1
+        with:
+          path: |
+            ./DamageInfoPlugin/bin/Release/DamageInfoPlugin/*
